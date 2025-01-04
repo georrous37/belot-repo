@@ -107,5 +107,6 @@ def play_game():
     print(f"Team 1 (Players 1 & 3): {scores[0]} points")
     print(f"Team 2 (Players 2 & 4): {scores[1]} points")
 
+print("poosledno 10")
 # Run the game
 play_game()
