@@ -39,20 +39,34 @@ def play_trick(players_hands, trump_suit):
     lead_suit = None
 
     for i, hand in enumerate(players_hands):
-        if lead_suit:
+        if lead_suit: # Not the first player in the trick
+            # Determine valid cards based on the lead suit
             valid_cards = [card for card in hand if card.endswith(lead_suit)]
-        else:
+        else: # First player in the trick
+            # Determine valid cards based on the trump suit
             valid_cards = hand
 
         if not valid_cards:
             first_player_team = (0 % 2)  # Team of the first player (0-indexed)
             current_player_team = (i % 2)  # Team of the current player
-            winning_card = determine_winning_card(trick, lead_suit, trump_suit)
-            winning_player = trick.index(winning_card)
+            winning_card_sofar = determine_winning_card(trick, lead_suit, trump_suit)
+            winning_player = trick.index(winning_card_sofar)
           
-            if (current_player_team != winning_player % 2):  # Check if the opponent team currently has the highest card in the trick
-                trump_cards = [card for card in hand if card.endswith(trump_suit)]
-                valid_cards = trump_cards if trump_cards else hand
+            if (current_player_team != winning_player % 2): # Check if the opponent team currently has the highest card in the trick
+                # Tsakane: Player does not have the lead suit and plays a trump card instead
+                trump_cards = [card for card in hand if card.endswith(trump_suit)] # Trump cards in hand
+                if trump_cards: # If player has trump cards, play the highest one
+                    # Find the highest trump card in the trick
+                    highest_trump_in_trick = max([card for card in trick if card.endswith(trump_suit)], key=lambda card: get_card_points(card, True), default=None)
+                    if highest_trump_in_trick:  # If there is a trump card in the trick
+                    # Play a trump card higher than the highest trump card in the trick
+                        higher_trump_cards = [card for card in trump_cards if get_card_points(card, True) > get_card_points(highest_trump_in_trick, True)]
+                        valid_cards = higher_trump_cards if higher_trump_cards else trump_cards
+                    else:
+                        # Play a trump card in hand
+                        valid_cards = trump_cards
+                else:
+                    valid_cards = hand
             else:
                 valid_cards = hand
 
